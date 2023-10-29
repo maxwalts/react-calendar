@@ -8,7 +8,7 @@ function getDateOfFirst(selectedDate: Date) {
     return newDate
 }
 
-function getCellDay(dateOfFirst: Date, row: number, col: number, selectedDate: Date) {
+function getCellDay(dateOfFirst: Date, row: number, col: number) {
     {/* we want to get the day of firstDate minus dayofFirst plus rownum + col * 7 */ }
     const dayOfFirst: number = dateOfFirst.getDay()
     var isSelectedMonth = true;
@@ -20,11 +20,9 @@ function getCellDay(dateOfFirst: Date, row: number, col: number, selectedDate: D
     return { date: d.getDate(), month: d.getMonth(), year: d.getFullYear(), isSelectedMonth }
 }
 
-
 function getDaysInMonth(month: number, year: number) {
     return new Date(year, month + 1, 0).getDate();
 }
-
 
 export default function Calendar() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -54,23 +52,15 @@ export default function Calendar() {
         setSelectedDate(d)
     }
 
-
-    const btnClass = "bg-blue-500 hover:bg-blue-700 text-white font-semibold px-1 rounded min-w-fit"
-
-
-
     useEffect(() => {
         // console.log("you are selecting", selectedDate)
         const dateOfFirst = getDateOfFirst(selectedDate)
-
         setDateOfFirst(dateOfFirst)
         const daysInMonth = getDaysInMonth(selectedDate.getMonth(), selectedDate.getFullYear())
         setDaysInMonth(daysInMonth)
-
-
-
     }, [selectedDate])
 
+    const btnClass = "bg-blue-500 hover:bg-blue-700 text-white font-semibold px-1 rounded min-w-fit"
     return (
         <div className="bg-slate-50 rounded-lg p-4 border m-8">
             <div className="header text-center min-w-max">
@@ -104,7 +94,7 @@ export default function Calendar() {
                             <tr key={`row_${j}`}>
                                 <td colSpan={2}></td>
                                 {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-                                    const cellDayObject = getCellDay(dateOfFirst, i, j, selectedDate)
+                                    const cellDayObject = getCellDay(dateOfFirst, i, j)
                                     return <td key={`cell_${i}_${j}`}>
                                         <DateCellButton
                                             onClick={() => {
