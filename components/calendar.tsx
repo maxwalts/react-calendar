@@ -26,8 +26,7 @@ function getDaysInMonth(month: number, year: number) {
 
 export default function Calendar() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-    const [dateOfFirst, setDateOfFirst] = useState<Date | null>(null)
-    const [daysInMonth, setDaysInMonth] = useState<number | null>(null)
+    // const [dateOfFirst, setDateOfFirst] = useState<Date | null>(null)
 
     function handleIncrementMonth() {
         const newDate = new Date(selectedDate.toString())
@@ -53,11 +52,7 @@ export default function Calendar() {
     }
 
     useEffect(() => {
-        // console.log("you are selecting", selectedDate)
-        const dateOfFirst = getDateOfFirst(selectedDate)
-        setDateOfFirst(dateOfFirst)
-        const daysInMonth = getDaysInMonth(selectedDate.getMonth(), selectedDate.getFullYear())
-        setDaysInMonth(daysInMonth)
+
     }, [selectedDate])
 
     const btnClass = "bg-blue-500 hover:bg-blue-700 text-white font-semibold px-1 rounded min-w-fit"
@@ -90,14 +85,15 @@ export default function Calendar() {
                         </tr>
                     </thead>
                     <tbody>
-                        {dateOfFirst && [0, 1, 2, 3, 4, 5].map((j) => (
+                        {selectedDate && [0, 1, 2, 3, 4, 5].map((j) => (
                             <tr key={`row_${j}`}>
                                 <td colSpan={2}></td>
                                 {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-                                    const cellDayObject = getCellDay(dateOfFirst, i, j)
+                                    const cellDayObject = getCellDay(getDateOfFirst(selectedDate), i, j)
                                     return <td key={`cell_${i}_${j}`}>
                                         <DateCellButton
-                                            onClick={() => {
+                                            onClick={(e) => {
+                                                console.log(e)
                                                 setSelectedDate(new Date(cellDayObject.year, cellDayObject.month, cellDayObject.date))
                                             }}
                                             cellDayObject={cellDayObject}
@@ -118,20 +114,24 @@ export default function Calendar() {
 }
 
 function DateCellButton({ onClick, cellDayObject, selectedDate }: DateCellButtonProps) {
-    const [isSelected, setIsSelected] = useState(false)
 
-    useEffect(() => {
-        // console.log({ cellDayObject, selectedDate })
-        setIsSelected(cellDayObject.date == selectedDate.getDate() && cellDayObject.month == selectedDate.getMonth())
-    }, [cellDayObject, selectedDate])
+    // isSelected is not state because it can be computed.
+    const isSelected = cellDayObject.date == selectedDate.getDate() && cellDayObject.month == selectedDate.getMonth()
 
     return (
         <button
-            onClick={onClick}
+            draggable="true"
+            onDragStart={e => {
+                console.log(e)
+            }
+            }
+            onDragEnter={e => {
+                // toggle
+            }}
+            onClick={e => onClick(e)}
             className={`hover:transition-all duration-200 text-center hover:font-bold hover:cursor-pointer border w-12 h-12 rounded ${!cellDayObject.isSelectedMonth && "text-slate-400"} ${isSelected ? "bg-blue-400 font-bold border-blue-700 border-2" : "bg-white hover:bg-blue-100"}`}
         >
             {cellDayObject.date}
         </button >
     )
-
 }

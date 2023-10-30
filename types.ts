@@ -6,7 +6,7 @@ interface CellDayObjectProps {
 }
 
 interface DateCellButtonProps {
-    onClick: () => void;
+    onClick: (arg0: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     cellDayObject: CellDayObjectProps;
     selectedDate: Date;
 }
